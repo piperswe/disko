@@ -151,17 +151,16 @@ rec {
        zapCreateMount :: types.devices -> str
     */
     zapCreateMount = devices: ''
-      set -eux
+      set -efux
       # print existing disks
       lsblk
 
       # TODO get zap the same way we get create
+      # make partitioning idempotent by dismounting already mounted filesystems
+      if findmnt /mnt; then
+        umount -Rlv /mnt
+      fi
 
-      # clear out existing partition tables
-      # since we are booting with kexec (uses loopback block device), we won't affect our current installer os.
-      for p in /dev/nvme* /dev/sd*; do blkdiscard -f "$p"; done
-
-      set -f
       echo 'creating partitions...'
       ${diskoLib.create devices}
       echo 'mounting partitions...'
