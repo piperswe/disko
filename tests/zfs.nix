@@ -11,10 +11,9 @@ makeDiskoTest {
   postDisko = ''
     machine.succeed("zfs set keylocation=prompt zroot/encrypted")
   '';
-  enableOCR = true;
   bootCommands = ''
-    machine.wait_for_text("(?:passphrase|key) for")
-    machine.send_chars("secretsecret\n")
+    machine.wait_for_console_text("vda")
+    machine.send_console("secretsecret\n")
   '';
   extraTestScript = ''
     machine.succeed("test -b /dev/zvol/zroot/zfs_testvolume");
