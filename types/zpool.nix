@@ -76,7 +76,7 @@
             ${config.mountpoint} = ''
               if ! findmnt ${config.name} "${rootMountPoint}${config.mountpoint}" > /dev/null 2>&1; then
                 mount ${config.name} "${rootMountPoint}${config.mountpoint}" \
-                ${lib.optionalString ((config.options.mountpoint or "") != "legacy") "-o zfsutil"} \
+                ${lib.optionalString ((config.rootFsOptions.mountpoint or "") != "legacy") "-o zfsutil"} \
                 ${lib.concatMapStringsSep " " (opt: "-o ${opt}") config.mountOptions} \
                 -o X-mount.mkdir \
                 -t zfs
@@ -94,7 +94,7 @@
           fileSystems.${config.mountpoint} = {
             device = config.name;
             fsType = "zfs";
-            options = config.mountOptions ++ lib.optional ((config.options.mountpoint or "") != "legacy") "zfsutil";
+            options = config.mountOptions ++ lib.optional ((config.rootFsOptions.mountpoint or "") != "legacy") "zfsutil";
           };
         })
       ];
